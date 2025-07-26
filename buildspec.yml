@@ -3,7 +3,7 @@ version: 0.2
 env:
   variables:
     AWS_REGION: ap-south-1
-    ECR_REPO_URI: 124713843385.dkr.ecr.ap-south-1.amazonaws.com/backend-app
+    ECR_REPO_URI: 969794863233.dkr.ecr.ap-south-1.amazonaws.com/repo2
     IMAGE_NAME: sample-backend
     IMAGE_TAG: latest
     CONTAINER_NAME: testJavaContainer
