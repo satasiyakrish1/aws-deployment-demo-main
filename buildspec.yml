@@ -1,0 +1,44 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_REGION: ap-south-1
+    ECR_REPO_URI: 124713843385.dkr.ecr.ap-south-1.amazonaws.com/backend-app
+    IMAGE_NAME: sample-backend
+    IMAGE_TAG: latest
+    CONTAINER_NAME: testJavaContainer
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto21
+
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO_URI
+
+      - echo Building JAR file...
+      - mvn clean package -DskipTests
+
+  build:
+    commands:
+      - echo Building Docker image...
+      - docker build -t $IMAGE_NAME:1.0.0 .
+
+      - echo Tagging Docker image...
+      - docker tag $IMAGE_NAME:1.0.0 $ECR_REPO_URI:$IMAGE_TAG
+
+  post_build:
+    commands:
+      - echo Pushing Docker image to ECR...
+      - docker push $ECR_REPO_URI:$IMAGE_TAG
+
+#      - echo Writing imagedefinitions.json for ECS deployment...
+#      - echo '[{"name":"'"$CONTAINER_NAME"'","imageUri":"'"$ECR_REPO_URI:$IMAGE_TAG"'"}]' > imagedefinitions.json
+#
+#      - echo Build and push complete.
+#
+#artifacts:
+#  files:
+#    - imagedefinitions.json
